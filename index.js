@@ -32,61 +32,103 @@ This is how a store-item should look like
 const cartItemList = document.querySelector('.item-list.cart--item-list')
 //Stores the items the user can choose from
 const storeItemList = document.querySelector('.item-list.store--item-list')
-
+let shoppingList = []
 const state = {
     groceries: [
         {
             id: 1,
             name: 'beetroot',
-            price: 0.35
+            price: 0.35,
+            count: 0
         },
         {
             id: 2,
             name: 'carrot',
-            price: 0.25
+            price: 0.25,
+            count: 0
         },
         {
             id: 3,
             name: 'apple',
-            price: 0.45
+            price: 0.45,
+            count: 0
         },
         {
             id: 4,
             name: 'apricot',
-            price: 0.20
+            price: 0.20,
+            count: 0
         },
         {
             id: 5,
             name: 'avocado',
-            price: 0.80
+            price: 0.80,
+            count: 0
         },
         {
             id: 6,
             name: 'bananas',
-            price: 1.10
+            price: 1.10,
+            count: 0
         },
         {
             id: 7,
             name: 'bell-pepper',
-            price: 0.30
+            price: 0.30,
+            count: 0
         },
         {
             id: 8,
             name: 'berry',
-            price: 0.70
+            price: 0.70,
+            count: 0
         },
         {
             id: 9,
             name: 'blueberry',
-            price: 0.90
+            price: 0.90,
+            count: 0
         },
         {
             id: 10,
             name: 'eggplant',
-            price: 0.55
+            price: 0.55,
+            count: 0
         }
     ],
     shoppingList: []
+}
+
+function addZeros(number) {
+    const str = "" + number;
+    const pad = "000";
+    return pad.substring(0, pad.length - str.length) + str;
+}
+
+function renderCartItem() {
+    cartItemList.innerHTML = ''
+    for(const item of shoppingList){
+        const cartItemListLi = document.createElement('li')
+            const cartItemListIcon = document.createElement('img')
+            cartItemListIcon.setAttribute('class', 'cart--item-icon')
+            cartItemListIcon.setAttribute('src', `assets/icons/${addZeros(item.id)}-${item.name}.svg`)
+            cartItemListIcon.setAttribute('alt', `${item.name}`)
+
+            const cartItemListTitle = document.createElement('p')
+            cartItemListTitle.textContent = `${item.name}`
+            const cartItemListRemoveButton = document.createElement('button')
+            cartItemListRemoveButton.setAttribute('class','quantity-btn.remove-btn.center')
+            cartItemListRemoveButton.textContent = '-'
+            const cartItemListQuantity = document.createElement('span')
+            cartItemListQuantity.setAttribute('class', 'quantity-text.center')
+            cartItemListQuantity.textContent = `${item.count}`
+            const cartItemListAddButton = document.createElement('button')
+            cartItemListAddButton.setAttribute('class', 'quantity-btn.add-btn.center')
+            cartItemListAddButton.textContent = '+'
+        cartItemListLi.append(cartItemListIcon,cartItemListTitle,cartItemListRemoveButton,cartItemListQuantity,cartItemListAddButton)
+        
+        cartItemList.append(cartItemListLi)
+    }
 }
 
 function initializeStoreItems() {
@@ -105,13 +147,17 @@ function initializeStoreItems() {
             storeItemListButton.textContent = 'Add to cart'
         storeItemListLi.append(storeItemListIcon, storeItemListButton)
     storeItemList.append(storeItemListLi)
+
+    storeItemListButton.addEventListener('click', function(){
+        if(item.count <= 0){
+        shoppingList.push(state.groceries[(item.id)-1])
+        item.count ++
+        }else item.count ++
+        renderCartItem()
+    })
+
     }
 }
 
-function addZeros(number) {
-    const str = "" + number;
-    const pad = "000";
-    return pad.substring(0, pad.length - str.length) + str;
-}
 
 initializeStoreItems()

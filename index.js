@@ -106,6 +106,12 @@ function addZeros(number) {
     return pad.substring(0, pad.length - str.length) + str;
 }
 
+function deleteCartItemOnZero(){
+    state.shoppingList = state.shoppingList.filter(function(item){
+        return item.count > 0
+    })
+}
+
 function calculateTotalPrice(){
     state.totalPrice = (state.groceries[0].price*state.groceries[0].count)+(state.groceries[1].price*state.groceries[1].count)+(state.groceries[2].price*state.groceries[2].count)+(state.groceries[3].price*state.groceries[3].count)+(state.groceries[4].price*state.groceries[4].count)+(state.groceries[5].price*state.groceries[5].count)+(state.groceries[6].price*state.groceries[6].count)+(state.groceries[7].price*state.groceries[7].count)+(state.groceries[8].price*state.groceries[8].count)+(state.groceries[9].price*state.groceries[9].count)
     
@@ -137,15 +143,20 @@ function renderCartItem() {
         
         cartItemList.append(cartItemListLi)
 
+/***********QUESTION FOR NICO: HOW DO YOU STOP THE FUNCTION IF THE COUNT IS BELOW ZERO?                            
+ */
+
         cartItemListRemoveButton.addEventListener('click',function(){
             item.count -- 
-            renderCartItem()
             calculateTotalPrice()
+            deleteCartItemOnZero()
+            renderCartItem()
         })
         cartItemListAddButton.addEventListener('click', function(){
             item.count ++
-            renderCartItem()
             calculateTotalPrice()
+            deleteCartItemOnZero()
+            renderCartItem()
         })
     }
 }

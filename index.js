@@ -1,33 +1,3 @@
-/*
-
-This is how a cart-item should look like
-
-<li>
-  <img
-    class="cart--item-icon"
-    src="assets/icons/001-beetroot.svg"
-    alt="beetroot"
-  />
-  <p>beetroot</p>
-  <button class="quantity-btn remove-btn center">-</button>
-  <span class="quantity-text center">1</span>
-  <button class="quantity-btn add-btn center">+</button>
-</li>
-
-
-////////////////////////
-
-This is how a store-item should look like
-
-<li>
-  <div class="store--item-icon">
-    <img src="assets/icons/001-beetroot.svg" alt="beetroot" />
-  </div>
-  <button>Add to cart</button>
-</li>
-
-*/
-
 //Stores the items the user has chosen
 const cartItemList = document.querySelector('.item-list.cart--item-list')
 //Stores the items the user can choose from
@@ -95,9 +65,7 @@ const state = {
             price: 0.55,
             count: 0
         }
-    ],
-    shoppingList: [],
-    totalPrice: 0
+    ]
 }
 
 function addZeros(number) {
@@ -106,98 +74,91 @@ function addZeros(number) {
     return pad.substring(0, pad.length - str.length) + str;
 }
 
-function deleteCartItemOnZero(){
-    state.shoppingList = state.shoppingList.filter(function(item){
+function getCartItems() {
+    return state.groceries.filter(function (item) {
         return item.count > 0
     })
 }
 
-function calculateTotalPrice(){
-    state.totalPrice = (state.groceries[0].price*state.groceries[0].count)+(state.groceries[1].price*state.groceries[1].count)+(state.groceries[2].price*state.groceries[2].count)+(state.groceries[3].price*state.groceries[3].count)+(state.groceries[4].price*state.groceries[4].count)+(state.groceries[5].price*state.groceries[5].count)+(state.groceries[6].price*state.groceries[6].count)+(state.groceries[7].price*state.groceries[7].count)+(state.groceries[8].price*state.groceries[8].count)+(state.groceries[9].price*state.groceries[9].count)
-    
+function renderTotalPrice() {
+    let totalPrice = 0
+    for (const item of state.groceries) {
+        totalPrice += (item.price * item.count)
+    }
     const totalPriceSpan = document.querySelector('.total-number')
-    totalPriceSpan.textContent = `£${state.totalPrice.toFixed(2)}`
+    totalPriceSpan.textContent = `£${totalPrice.toFixed(2)}`
 }
 
 function renderCartItem() {
     cartItemList.innerHTML = ''
-    for(const item of state.shoppingList){
+    for (const item of getCartItems()) {
         const cartItemListLi = document.createElement('li')
-            const cartItemListIcon = document.createElement('img')
-            cartItemListIcon.setAttribute('class', 'cart--item-icon')
-            cartItemListIcon.setAttribute('src', `assets/icons/${addZeros(item.id)}-${item.name}.svg`)
-            cartItemListIcon.setAttribute('alt', `${item.name}`)
+        const cartItemListIcon = document.createElement('img')
+        cartItemListIcon.setAttribute('class', 'cart--item-icon')
+        cartItemListIcon.setAttribute('src', `assets/icons/${addZeros(item.id)}-${item.name}.svg`)
+        cartItemListIcon.setAttribute('alt', `${item.name}`)
 
-            const cartItemListTitle = document.createElement('p')
-            cartItemListTitle.textContent = `${item.name}`
-            const cartItemListRemoveButton = document.createElement('button')
-            cartItemListRemoveButton.setAttribute('class','quantity-btn.remove-btn.center')
-            cartItemListRemoveButton.textContent = '-'
-            const cartItemListQuantity = document.createElement('span')
-            cartItemListQuantity.setAttribute('class', 'quantity-text.center')
-            cartItemListQuantity.textContent = `${item.count}`
-            const cartItemListAddButton = document.createElement('button')
-            cartItemListAddButton.setAttribute('class', 'quantity-btn.add-btn.center')
-            cartItemListAddButton.textContent = '+'
-        cartItemListLi.append(cartItemListIcon,cartItemListTitle,cartItemListRemoveButton,cartItemListQuantity,cartItemListAddButton)
-        
+        const cartItemListTitle = document.createElement('p')
+        cartItemListTitle.textContent = `${item.name}`
+        const cartItemListRemoveButton = document.createElement('button')
+        cartItemListRemoveButton.setAttribute('class', 'quantity-btn.remove-btn.center')
+        cartItemListRemoveButton.textContent = '-'
+        const cartItemListQuantity = document.createElement('span')
+        cartItemListQuantity.setAttribute('class', 'quantity-text.center')
+        cartItemListQuantity.textContent = `${item.count}`
+        const cartItemListAddButton = document.createElement('button')
+        cartItemListAddButton.setAttribute('class', 'quantity-btn.add-btn.center')
+        cartItemListAddButton.textContent = '+'
+        cartItemListLi.append(cartItemListIcon, cartItemListTitle, cartItemListRemoveButton, cartItemListQuantity, cartItemListAddButton)
+
         cartItemList.append(cartItemListLi)
 
-/***********QUESTION FOR NICO: HOW DO YOU STOP THE FUNCTION IF THE COUNT IS BELOW ZERO?                            
- */
 
-        cartItemListRemoveButton.addEventListener('click',function(){
-            item.count -- 
-            calculateTotalPrice()
-            deleteCartItemOnZero()
-            renderCartItem()
+        cartItemListRemoveButton.addEventListener('click', function () {
+            item.count--
+            render()
         })
-        cartItemListAddButton.addEventListener('click', function(){
-            item.count ++
-            calculateTotalPrice()
-            deleteCartItemOnZero()
-            renderCartItem()
+        cartItemListAddButton.addEventListener('click', function () {
+            item.count++
+            render()
         })
     }
 }
 
-/************QUESTION FOR NICO: HOW DO YOU ACCESS VARIABLES FROM OTHER FUNCTIONS
- *                              TO ANOTHER FUNCTION? FOR EXAMPLE THE FUNCTION BELOW
- *                              WAS INTENDED TO CREATE THE STORE ITEMS LIST ON THE
- *                              HEADER AND NOTHING ELSE. BUT SINCE I HAD CREATED THE
- *                              BUTTON FOR EVERY ITEM IN THE FIRST FUNCTION, I COULDNT 
- *                              ACCESS IT ON ANOTHER FUNCTION, THEREFORE I ADDED THE
- *                              EVENT LISTENER AND RESTATE-RERENDER INSIDE THE FIRST
- *                              FUNCTION.
- */
-
-function initializeStoreItems() {
-    for(const item of state.groceries){
+function renderStoreItems() {
+    storeItemList.innerHTML=''
+    for (const item of state.groceries) {
         const storeItemListLi = document.createElement('li')
         storeItemListLi.setAttribute('class', 'store--item')
 
-            const storeItemListIcon = document.createElement('div')
-            storeItemListIcon.setAttribute('class', 'store--item-icon')
-                const storeItemListIconImage = document.createElement('img')
-                storeItemListIconImage.setAttribute('src', `assets/icons/${addZeros(item.id)}-${item.name}.svg`)
-                storeItemListIconImage.setAttribute('alt', `${item.name}`)
-            storeItemListIcon.append(storeItemListIconImage)
+        const storeItemListIcon = document.createElement('div')
+        storeItemListIcon.setAttribute('class', 'store--item-icon')
+        const storeItemListIconImage = document.createElement('img')
+        storeItemListIconImage.setAttribute('src', `assets/icons/${addZeros(item.id)}-${item.name}.svg`)
+        storeItemListIconImage.setAttribute('alt', `${item.name}`)
+        storeItemListIcon.append(storeItemListIconImage)
 
-            const storeItemListButton = document.createElement('button')
-            storeItemListButton.textContent = 'Add to cart'
+        const storeItemListButton = document.createElement('button')
+        storeItemListButton.textContent = 'Add to cart'
         storeItemListLi.append(storeItemListIcon, storeItemListButton)
-    storeItemList.append(storeItemListLi)
+        storeItemList.append(storeItemListLi)
 
-    storeItemListButton.addEventListener('click', function(){
-        if(item.count <= 0){
-        state.shoppingList.push(state.groceries[(item.id)-1])
-        item.count ++
-        }else item.count ++
-
-    renderCartItem()
-        calculateTotalPrice()
-    })
+        listenToStoreItemButton(storeItemListButton, item)
     }
 }
 
-initializeStoreItems()
+
+function listenToStoreItemButton(button, item) {
+    button.addEventListener('click', function () {
+        item.count++
+        render()
+    })
+}
+
+function render(){
+renderStoreItems()
+renderCartItem()
+renderTotalPrice()
+}
+
+render()

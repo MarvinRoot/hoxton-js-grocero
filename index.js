@@ -106,6 +106,13 @@ function addZeros(number) {
     return pad.substring(0, pad.length - str.length) + str;
 }
 
+function calculateTotalPrice(){
+    state.totalPrice = (state.groceries[0].price*state.groceries[0].count)+(state.groceries[1].price*state.groceries[1].count)+(state.groceries[2].price*state.groceries[2].count)+(state.groceries[3].price*state.groceries[3].count)+(state.groceries[4].price*state.groceries[4].count)+(state.groceries[5].price*state.groceries[5].count)+(state.groceries[6].price*state.groceries[6].count)+(state.groceries[7].price*state.groceries[7].count)+(state.groceries[8].price*state.groceries[8].count)+(state.groceries[9].price*state.groceries[9].count)
+    
+    const totalPriceSpan = document.querySelector('.total-number')
+    totalPriceSpan.textContent = `£${state.totalPrice.toFixed(2)}`
+}
+
 function renderCartItem() {
     cartItemList.innerHTML = ''
     for(const item of state.shoppingList){
@@ -129,8 +136,29 @@ function renderCartItem() {
         cartItemListLi.append(cartItemListIcon,cartItemListTitle,cartItemListRemoveButton,cartItemListQuantity,cartItemListAddButton)
         
         cartItemList.append(cartItemListLi)
+
+        cartItemListRemoveButton.addEventListener('click',function(){
+            item.count -- 
+            renderCartItem()
+            calculateTotalPrice()
+        })
+        cartItemListAddButton.addEventListener('click', function(){
+            item.count ++
+            renderCartItem()
+            calculateTotalPrice()
+        })
     }
 }
+
+/************QUESTION FOR NICO: HOW DO YOU ACCESS VARIABLES FROM OTHER FUNCTIONS
+ *                              TO ANOTHER FUNCTION? FOR EXAMPLE THE FUNCTION BELOW
+ *                              WAS INTENDED TO CREATE THE STORE ITEMS LIST ON THE
+ *                              HEADER AND NOTHING ELSE. BUT SINCE I HAD CREATED THE
+ *                              BUTTON FOR EVERY ITEM IN THE FIRST FUNCTION, I COULDNT 
+ *                              ACCESS IT ON ANOTHER FUNCTION, THEREFORE I ADDED THE
+ *                              EVENT LISTENER AND RESTATE-RERENDER INSIDE THE FIRST
+ *                              FUNCTION.
+ */
 
 function initializeStoreItems() {
     for(const item of state.groceries){
@@ -154,10 +182,9 @@ function initializeStoreItems() {
         state.shoppingList.push(state.groceries[(item.id)-1])
         item.count ++
         }else item.count ++
-        renderCartItem()
-        state.totalPrice += item.price
-        const totalPriceSpan = document.querySelector('.total-number')
-        totalPriceSpan.textContent = `£${state.totalPrice.toFixed(2)}`
+
+    renderCartItem()
+        calculateTotalPrice()
     })
     }
 }

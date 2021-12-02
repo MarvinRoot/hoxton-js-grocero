@@ -32,7 +32,7 @@ This is how a store-item should look like
 const cartItemList = document.querySelector('.item-list.cart--item-list')
 //Stores the items the user can choose from
 const storeItemList = document.querySelector('.item-list.store--item-list')
-let shoppingList = []
+
 const state = {
     groceries: [
         {
@@ -96,7 +96,8 @@ const state = {
             count: 0
         }
     ],
-    shoppingList: []
+    shoppingList: [],
+    totalPrice: 0
 }
 
 function addZeros(number) {
@@ -107,7 +108,7 @@ function addZeros(number) {
 
 function renderCartItem() {
     cartItemList.innerHTML = ''
-    for(const item of shoppingList){
+    for(const item of state.shoppingList){
         const cartItemListLi = document.createElement('li')
             const cartItemListIcon = document.createElement('img')
             cartItemListIcon.setAttribute('class', 'cart--item-icon')
@@ -150,14 +151,15 @@ function initializeStoreItems() {
 
     storeItemListButton.addEventListener('click', function(){
         if(item.count <= 0){
-        shoppingList.push(state.groceries[(item.id)-1])
+        state.shoppingList.push(state.groceries[(item.id)-1])
         item.count ++
         }else item.count ++
         renderCartItem()
+        state.totalPrice += item.price
+        const totalPriceSpan = document.querySelector('.total-number')
+        totalPriceSpan.textContent = `£${state.totalPrice.toFixed(2)}`
     })
-
     }
 }
-
 
 initializeStoreItems()
